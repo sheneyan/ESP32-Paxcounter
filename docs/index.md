@@ -1,3 +1,5 @@
+> **本 fork 的状态：Cardputer ADV 适配筹备中。** 本页其余内容为继承的上游通用说明，不代表已经支持 ADV。请先阅读 [ADV 适配路线](cardputer-adv.md)；仓库首页提供本 fork 的定位、计划和当前验证状态。
+
 # ESP32-Paxcounter
 
 ![logo](assets/paxcounter_logo_white.png)

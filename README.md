@@ -1,75 +1,54 @@
-# ESP32-Paxcounter
-![logo](docs/assets/paxcounter_logo_white.png)
+# ESP32-Paxcounter for Cardputer ADV
 
-**Wifi & Bluetooth driven, LoRaWAN enabled, Paxcounter and multi-sensor appliance, built on cheap ESP32 LoRa IoT boards**
+面向 **M5Stack Cardputer ADV + Cap LoRa-1262** 的 ESP32-Paxcounter 适配项目，目标是做一台轻量、可通过 M5Launcher 安装和切换的便携无线设备计数器。
 
-[Tutorial (in german language): heise.de](https://www.heise.de/select/make/2019/1/1551099236518668)
+基于 [cyberman54/ESP32-Paxcounter](https://github.com/cyberman54/ESP32-Paxcounter) fork，复用上游 Wi-Fi / BLE 计数与 LoRaWAN 基础，重点适配 ADV 的屏幕、键盘和扩展模块。
 
-[![CodeFactor](https://www.codefactor.io/repository/github/cyberman54/esp32-paxcounter/badge)](https://www.codefactor.io/repository/github/cyberman54/esp32-paxcounter)
-[![PlatformIO CI](https://github.com/cyberman54/ESP32-Paxcounter/actions/workflows/build.yml/badge.svg?event=push)](https://github.com/cyberman54/ESP32-Paxcounter/actions/workflows/build.yml)
+> **当前状态：适配筹备中。** 本次初始化仅更新项目说明与路线，代码仍为继承的上游版本；尚未提供经过验证的 ADV 构建配置或固件，也未进行 ADV 实机验收。以下功能均为规划，不代表已经实现。
 
----
+## 为什么做这个 fork
 
-**Ready-to-go Hardware**: <a href="https://de.aliexpress.com/item/32915894264.html" target="_blank">LILYGO® Paxcounter LoRa</a>
+希望在 Cardputer ADV 上随身观察周边无线设备数量及其变化，并保留后续位置记录和 LoRa 传输的可能性。
 
-**Documentation**: <a href="https://paxcounter.org" target="_blank">https://paxcounter.org</a>
+主要使用场景是 **M5Launcher 多固件共存**。根据当前使用体验，较大的固件会增加空间压力，切换时有时需要临时移除其他固件。因此，本项目选择在原 Paxcounter 上做专用适配，按需启用功能，控制产物体积，并用实际分区与 Launcher 安装结果验证收益。
 
-**Source Code**: <a href="https://github.com/cyberman54/ESP32-Paxcounter" target="_blank">https://github.com/cyberman54/ESP32-Paxcounter</a>
+## 目标硬件
 
----
+| 硬件 | 作用 |
+| --- | --- |
+| Cardputer ADV（ESP32-S3） | Wi-Fi / BLE 扫描、240×135 彩屏显示、键盘操作 |
+| Cap LoRa-1262（SX1262 + GNSS） | 后续 LoRaWAN 上报与定位扩展 |
+| microSD 卡（可选） | 后续统计数据记录与导出 |
 
-<img src="docs/img/Paxcounter-title.jpg">
-<img src="docs/img/Paxcounter-ttgo.jpg">
-<img src="docs/img/Paxcounter-lolin.gif">
-<img src="docs/img/Paxcounter-Screen.png">
-<img src="docs/img/TTGO-case.jpg">
-<img src="docs/img/TTGO-curves.jpg">
-<img src="docs/img/Paxcounter-LEDmatrix.jpg">
-<img src="docs/img/Paxcounter-Clock2.png">
-<img src="docs/img/Paxcounter-ttgo-twristband.jpg">
+硬件资料：[Cardputer ADV](https://docs.m5stack.com/en/core/Cardputer-Adv) · [Cap LoRa-1262](https://docs.m5stack.com/en/cap/Cap_LoRa-1262)。早期 Cap LoRa868 与新版 LoRa-1262 存在差异，不能直接套用初始化配置。
 
-# Use case
+## 开发方向
 
-Paxcounter is an [ESP32](https://www.espressif.com/en/products/socs/esp32) MCU based device for metering passenger flows and multi-sensor data in realtime. It counts how many mobile devices are around. This gives an estimation how many people are around. Paxcounter detects Wifi and Bluetooth signals in the air, focusing on mobile devices by evaluating their MAC adresses. In parallel, it reads and stores data from multiple connected environment sensors.
+1. **先完成单机计数**：增加 ADV 板级配置，验证 Wi-Fi / BLE 计数，适配屏幕与键盘，提供暂停、清零、翻页和必要参数设置。
+2. **验证精简交付**：关闭无关功能，记录应用二进制与分区占用，生成适合 M5Launcher 的应用固件，验证安装、启动和切换。
+3. **按需扩展**：趋势图、GNSS 定位、SD 统计 CSV 和 LoRaWAN 上报，分别验证后再纳入版本。
 
-Intention of this project is to do this without intrusion in privacy: You don't need to track people owned devices, if you just want to count them. Therefore, Paxcounter does not persistenly store MAC adresses and does no kind of fingerprinting the scanned devices.
+首版不以多传感器平台或完整网络工具箱为目标。GPS、SD、LoRaWAN 按需加入；没有实测前不承诺具体固件大小、节省空间比例或续航。
 
-Data can either be stored on a local SD-card, transferred to cloud using LoRaWAN network (e.g. TheThingsNetwork or Helium) or MQTT over TCP/IP, or transmitted to a local host using serial (SPI) interface.
+详细范围、硬件注意事项和验收条件见 [ADV 适配路线](docs/cardputer-adv.md)。
 
-You can build this project battery powered using ESP32 deep sleep mode and reach long uptimes with a single 18650 Li-Ion cell.
+## 计数的含义
 
-# License
+Paxcounter 统计的是扫描窗口内检测到的无线设备，不能直接等同于人数；Wi-Fi 与 BLE 数量也不能简单相加当作人数。MAC 随机化、设备无线状态和扫描环境会影响结果，初期用于观察设备数量与人流趋势。
 
-Copyright 2018-2022 Oliver Brandmueller <ob@sysadm.in>
+延续上游只做汇总计数的方向：不新增原始 MAC 持久化、个体追踪或去随机化功能。后续 SD 记录与无线传输以时间窗口统计值为主。
 
-Copyright 2018-2022 Klaus Wilting <verkehrsrot@arcor.de>
+## 构建与固件
 
-   Licensed under the Apache License, Version 2.0 (the "License");
-   you may not use this file except in compliance with the License.
-   You may obtain a copy of the License at
+当前仓库中的构建说明和配置来自上游，**尚无本 fork 经验证的 Cardputer ADV 构建入口、Launcher 分区方案或可用固件下载**。请勿将其他开发板的构建产物当作 ADV 固件直接刷入。
 
-       http://www.apache.org/licenses/LICENSE-2.0
+适配完成后，每次交付应附源码版本、构建命令、应用二进制大小、分区要求、校验值及实机验证结果。
 
-   Unless required by applicable law or agreed to in writing, software
-   distributed under the License is distributed on an "AS IS" BASIS,
-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   See the License for the specific language governing permissions and
-   limitations under the License.
+## 上游与许可
 
-NOTICE:
-Parts of the source files in this repository are made available under different licenses,
-see file <A HREF="https://github.com/cyberman54/ESP32-Paxcounter/blob/master/LICENSE">LICENSE.txt</A> in this repository. Refer to each individual source file for more details.
+- 本 fork：[sheneyan/ESP32-Paxcounter](https://github.com/sheneyan/ESP32-Paxcounter)
+- 上游项目：[cyberman54/ESP32-Paxcounter](https://github.com/cyberman54/ESP32-Paxcounter)
+- 上游原始 README（本 fork 初始化时保存）：[README.upstream.md](README.upstream.md)
+- 上游文档：[paxcounter.org](https://paxcounter.org/)，描述上游通用能力，不代表本 fork 已完成 ADV 适配。
 
-# Credits
-
-Thanks to
-- [Oliver Brandmüller](https://github.com/spmrider) for idea and initial setup of this project
-- [Charles Hallard](https://github.com/hallard) for major code contributions to this project
-- [robbi5](https://github.com/robbi5) for the payload converter
-- [Caspar Armster](https://www.dasdigidings.de/) for the The Things Stack V3 payload converter
-- [terrillmoore](https://github.com/mcci-catena) for maintaining the LMIC for arduino LoRaWAN stack
-- [sbamueller](https://github.com/sbamueller) for writing the tutorial in Make Magazine
-- [Stefan](https://github.com/nerdyscout) for paxcounter opensensebox integration
-- [August Quint](https://github.com/AugustQu) for adding SD card data logger and SDS011 support
-- [t-huyeng](https://github.com/t-huyeng) for adding a CI workflow and rework documentation
-- [TD-er](https://github.com/TD-er) for bugfixings and T-Beam documentation
+保留上游版权、许可与致谢。上游主体采用 Apache License 2.0，部分文件有单独许可说明，详见 [LICENSE](LICENSE)、[上游版权与致谢](README.upstream.md#license) 及各源文件头部声明。

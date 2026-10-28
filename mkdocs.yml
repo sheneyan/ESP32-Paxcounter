@@ -1,5 +1,5 @@
-site_name: Documentation
-site_description: ESP32-Paxcounter Documentation
+site_name: ESP32-Paxcounter for Cardputer ADV
+site_description: Cardputer ADV + Cap LoRa-1262 adaptation planning and upstream documentation
 theme:
   name: material
   logo: assets/paxcounter_logo_white.svg
@@ -26,6 +26,7 @@ theme:
       primary: indigo
 nav:
   - Intro: index.md
+  - Cardputer ADV: cardputer-adv.md
   - Hardware: hardware.md
   - Getting Started: getting-started.md
   - Display & LED: display-led.md
@@ -52,4 +53,4 @@ markdown_extensions:
   - pymdownx.tabbed:
       alternate_style: true
 
-repo_url: https://github.com/cyberman54/ESP32-Paxcounter
+repo_url: https://github.com/sheneyan/ESP32-Paxcounter
