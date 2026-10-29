@@ -14,3 +14,10 @@ shared/loraconf.h
 shared/ota.conf
 platformio.ini
 shared/paxcounter.conf
+
+# Generated Cardputer release packages
+/dist/
+
+# Python helper caches
+__pycache__/
+*.pyc

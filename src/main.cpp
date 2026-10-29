@@ -78,6 +78,9 @@ BME_IRQ         <- setBMEIRQ() <- Ticker.h
 
 // Basic Config
 #include "main.h"
+#ifdef CARDPUTER_ADV
+#include "cardputer.h"
+#endif
 
 char clientId[20] = {0}; // unique ClientID
 
@@ -292,9 +295,11 @@ void setup() {
     start_boot_menu();
 #endif
 
-  // start local webserver on rcommand request
+  // The lightweight ADV target does not include the maintenance web server.
+#if !defined(CARDPUTER_ADV)
   if (RTC_runmode == RUNMODE_MAINTENANCE)
     start_boot_menu();
+#endif
 
   // start libpax lib (includes timer to trigger cyclic senddata)
   ESP_LOGI(TAG, "Starting libpax...");
@@ -490,6 +495,10 @@ void setup() {
 
   // show compiled features
   ESP_LOGI(TAG, "Features:%s", features);
+
+#ifdef CARDPUTER_ADV
+  cardputer_init();
+#endif
 
   // set runmode to normal
   RTC_runmode = RUNMODE_NORMAL;

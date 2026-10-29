@@ -64,14 +64,20 @@ static void migrateConfig(void) {
 }
 
 // save current configuration from RAM to NVRAM
-void saveConfig(bool erase) {
+bool saveConfig(bool erase) {
   ESP_LOGI(TAG, "Storing settings to NVRAM...");
 
-  nvram.begin(DEVCONFIG, false);
+  if (!nvram.begin(DEVCONFIG, false)) {
+    ESP_LOGE(TAG, "NVRAM open failed");
+    return false;
+  }
 
   if (erase) {
     ESP_LOGI(TAG, "Resetting device to factory settings");
-    nvram.clear();
+    if (!nvram.clear()) {
+      nvram.end();
+      return false;
+    }
     defaultConfig(&cfg);
   }
 
@@ -80,12 +86,14 @@ void saveConfig(bool erase) {
   memcpy(buffer + cfgLen, &cfgMagicBytes, cfgLen2);
 
   // save byte array to NVRAM, padding with cfg magicbyes
-  if (nvram.putBytes(DEVCONFIG, buffer, cfgLen + cfgLen2))
+  const bool saved = nvram.putBytes(DEVCONFIG, buffer, cfgLen + cfgLen2) == cfgLen + cfgLen2;
+  if (saved)
     ESP_LOGI(TAG, "Device settings saved");
   else
     ESP_LOGE(TAG, "NVRAM Error, device settings not saved");
 
   nvram.end();
+  return saved;
 }
 
 // load configuration from NVRAM into RAM and make it current

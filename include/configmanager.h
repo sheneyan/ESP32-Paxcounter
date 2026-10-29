@@ -7,7 +7,7 @@
 
 extern configData_t cfg;
 
-void saveConfig(bool erase);
+bool saveConfig(bool erase);
 void loadConfig(void);
 void eraseConfig(void);
 int version_compare(const String v1, const String v2);
