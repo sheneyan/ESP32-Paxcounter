@@ -1,4 +1,4 @@
-> **本 fork 的状态：Cardputer ADV 适配筹备中。** 本页其余内容为继承的上游通用说明，不代表已经支持 ADV。请先阅读 [ADV 适配路线](cardputer-adv.md)；仓库首页提供本 fork 的定位、计划和当前验证状态。
+> **Fork status:** Cardputer ADV development firmware is available for testing; the user has confirmed the display flicker fix. See the [ADV roadmap](cardputer-adv.md) and [validation record](cardputer-adv-validation.md). The remaining content below describes the upstream project.
 
 # ESP32-Paxcounter
 
